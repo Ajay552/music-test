@@ -2,40 +2,41 @@ import { notesToPlayInOrder } from "./music-to-play";
 import { BEATS_PER_MINUTE, MusicalNote } from "./musical-score";
 
 
-let i: number = 0;
+let count: number = 0;         
 
-const playMusic = () => {
-
+// Take a list of musical notes and play it's tune in the browser, following it's pitch and rhythm.
+const playMusic = (): void => {
     const notes: MusicalNote[] = notesToPlayInOrder;
-    
     // TODO Play these notes one after the other at the pitch and rhythm given in each note
-    if (i < notes.length) {
 
-        // Calculating beats
-        let totalBeats: number = (notes[i].beats * BEATS_PER_MINUTE);
-        let audioId: string = (notes[i].pitch + notes[i].octave);
+    if (count < notes.length) {             
+        const note = notes[count];
+        const totalBeats: number = note.beats * BEATS_PER_MINUTE;   // calculating total beats for each note
+        let audioId: string = note.pitch + note.octave;             // creating audio id to fetch audio 
 
-        if(notes[i].accidental){
-            audioId = audioId + notes[i].accidental;
-        }
-
+        if(note.accidental) audioId += note.accidental;             // adding accidental if it exist
         // Getting html audio element from index.html
-        let music: HTMLAudioElement = document.getElementById(audioId) as HTMLAudioElement;
+        const music: HTMLAudioElement = document.getElementById(audioId) as HTMLAudioElement;
+        music.play();        
+        
+        // disables the button while the music is playing 
+        (<HTMLInputElement> document.getElementById("start-playing")).disabled = true;  
 
-        // console.log(music);
-        music.play()
-    
-
+        // setTimeout plays the music for totalBeats amount of time(ms) 
         setTimeout((): void => {
-            music.pause();
-
+            music.pause();     
+            playMusic();       
         }, totalBeats);
 
-        music.onpause = playMusic;
-    
+        count++;          
+        
+      } else {
+        // enables the button back  
+        (<HTMLInputElement> document.getElementById("start-playing")).disabled = false;
+        count = 0;
+        return;
       }
-    
-      i++;
 }
 
 document.getElementById('start-playing')?.addEventListener('click', playMusic);
+
