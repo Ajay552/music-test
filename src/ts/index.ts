@@ -9,12 +9,14 @@ const playMusic = (): void => {
     const notes: MusicalNote[] = notesToPlayInOrder;
     // TODO Play these notes one after the other at the pitch and rhythm given in each note
 
-    if (count < notes.length) {             
+    if (count < notes.length) { 
+
         const note = notes[count];
         const totalBeats: number = note.beats * BEATS_PER_MINUTE;   // calculating total beats for each note
         let audioId: string = note.pitch + note.octave;             // creating audio id to fetch audio 
 
         if(note.accidental) audioId += note.accidental;             // adding accidental if it exist
+        
         // Getting html audio element from index.html
         const music: HTMLAudioElement = document.getElementById(audioId) as HTMLAudioElement;
         music.play();        
@@ -31,7 +33,7 @@ const playMusic = (): void => {
         count++;          
         
       } else {
-        // enables the button back  
+        // enables the button back  and sets count to 0 so it can be played without reloading browser
         (<HTMLInputElement> document.getElementById("start-playing")).disabled = false;
         count = 0;
         return;
